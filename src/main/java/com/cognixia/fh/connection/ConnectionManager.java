@@ -3,6 +3,7 @@ package com.cognixia.fh.connection;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 // This class will manage the connections to the database.
@@ -32,9 +33,9 @@ public class ConnectionManager {
         }
     }
 
-    public static Connection getConnection() {
+    public static Connection getConnection() throws SQLException {
         // If a connection does not exist, create a new one. Otherwise, return the existing connection.
-        if (connection == null) {
+        if (connection == null || connection.isClosed()) {
             makeConnection();
         }
         return connection;
