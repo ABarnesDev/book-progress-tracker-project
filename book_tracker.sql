@@ -19,7 +19,7 @@ CREATE TABLE book (
 CREATE TABLE tracker (
     user_id INT,
     book_id INT,
-    status ENUM('plan_to_read', 'in_progress', 'finished_reading') NOT NULL,
+    status ENUM('PLAN_TO_READ', 'CURRENTLY_READING', 'FINISHED_READING') NOT NULL,
     pages_read INT DEFAULT 0,
     rating SMALLINT CHECK (rating BETWEEN 1 AND 5),
     PRIMARY KEY (user_id, book_id),
