@@ -1,10 +1,6 @@
 package com.cognixia.fh.model;
 
 public class Tracker {
-    public enum Status {
-        PLAN_TO_READ, CURRENTLY_READING, FINISHED_READING
-    }
-
     private int userId;
     private int bookId;
     private Status status;

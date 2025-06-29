@@ -9,14 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cognixia.fh.connection.ConnectionManager;
-import com.cognixia.fh.model.Tracker;
-import com.cognixia.fh.model.Tracker.Status;
+import com.cognixia.fh.exception.InvalidPagesException;
+import com.cognixia.fh.exception.InvalidRatingException;
+import com.cognixia.fh.model.Status;
+import com.cognixia.fh.model.TrackedBook;
 
 public class TrackerDAOImpl implements TrackerDAO {
 
     // Add a new tracker to the database
     @Override
-    public boolean addTracker(int userId, int bookId, Status status, int pagesRead, int rating) {
+    public boolean addTracker(int userId, int bookId, Status status, int pagesRead, int totalPages, int rating) throws InvalidRatingException, InvalidPagesException {
+        // Throw an error if the number of pages read is negative or more than the total number of pages
+        if (pagesRead < 0 || pagesRead > totalPages) {
+            throw new InvalidPagesException(totalPages);
+        }
+
         boolean isCreated = false;
 
         // SQL query to insert a new tracker
@@ -45,11 +52,9 @@ public class TrackerDAOImpl implements TrackerDAO {
             }
 
         } catch (SQLException e) {
-            // If the rating is out of range, the error code will be 3819. If the book_id does not exist, the error code will be 1452.
+            // If the rating is out of range, the error code will be 3819.
             if (e.getErrorCode() == 3819) {
-                System.out.println("Error: Rating must be between 1 and 5.");
-            } else if (e.getErrorCode() == 1452) {
-                System.out.println("Book ID does not exist.");
+                throw new InvalidRatingException();
             } else {
                 System.out.println("Error tracking book");
             }
@@ -60,7 +65,12 @@ public class TrackerDAOImpl implements TrackerDAO {
 
     // Update an existing tracker in the database
     @Override
-    public boolean updateTracker(int userId, int bookId, Status status, int pagesRead, int rating) {
+    public boolean updateTracker(int userId, int bookId, Status status, int pagesRead, int totalPages, int rating) throws InvalidRatingException, InvalidPagesException {
+        // Throw an error if the number of pages read is negative or more than the total number of pages
+        if (pagesRead < 0 || pagesRead > totalPages) {
+            throw new InvalidPagesException(totalPages);
+        }
+
         boolean isUpdated = false;
 
         // SQL query to update an existing tracker
@@ -91,7 +101,7 @@ public class TrackerDAOImpl implements TrackerDAO {
         } catch (SQLException e) {
             // If the rating is out of range, the error code will be 3819.
             if (e.getErrorCode() == 3819) {
-                System.out.println("Error: Rating must be between 1 and 5.");
+                throw new InvalidRatingException();
             } else {
                 System.out.println("Error updating tracker");
             }
@@ -129,13 +139,16 @@ public class TrackerDAOImpl implements TrackerDAO {
         return isDeleted;
     }
 
-    // Retrieve all trackers for a specific user from the database
+    // Retrieve the books and tracking details for books that are currently being tracked by the user
     @Override
-    public List<Tracker> getTrackersByUserId(int userId) {
-        List<Tracker> trackers = new ArrayList<>();
+    public List<TrackedBook> getTrackedBooksByUserId(int userId) {
+        List<TrackedBook> trackedBooks = new ArrayList<>();
 
-        // SQL query to select trackers by user ID
-        String sql = "SELECT user_id, book_id, status, pages_read, rating FROM tracker WHERE user_id = ?";
+        // SQL query to select tracked books and their details
+        String sql = "SELECT t.book_id, b.title, b.author, t.status, t.pages_read, b.total_pages, t.rating " +
+                     "FROM tracker t " +
+                     "JOIN book b ON t.book_id = b.book_id " +
+                     "WHERE t.user_id = ?";
 
         try (Connection conn = ConnectionManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -145,28 +158,31 @@ public class TrackerDAOImpl implements TrackerDAO {
 
             ResultSet rs = ps.executeQuery();
 
-            // Iterate through the result set and create Tracker objects
+            // Iterate through the result set and create TrackedBook objects
             while (rs.next()) {
                 int bookId = rs.getInt("book_id");
+                String title = rs.getString("title");
+                String author = rs.getString("author");
                 Status status = Status.valueOf(rs.getString("status"));
                 int pagesRead = rs.getInt("pages_read");
-                Integer rating = rs.getInt("rating");
+                int totalPages = rs.getInt("total_pages");
+                int rating = rs.getInt("rating");
 
-                // If rating is Null, create Tracker without rating
-                Tracker tracker;
+                // If rating is Null, create TrackedBook without a rating
+                TrackedBook trackedBook;
                 if (rs.wasNull()) {
-                    tracker = new Tracker(userId, bookId, status, pagesRead);
+                    trackedBook = new TrackedBook(bookId, title, author, status, pagesRead, totalPages);
                 } else {
-                    tracker = new Tracker(userId, bookId, status, pagesRead, rating);
+                    trackedBook = new TrackedBook(bookId, title, author, status, pagesRead, totalPages, rating);
                 }
 
-                trackers.add(tracker);
+                trackedBooks.add(trackedBook);
             }
-
-        } catch (SQLException e) {
-            System.out.println("Error retrieving trackers");
+            
+        } catch (Exception e) {
+            System.out.println("Error retrieving tracked books.");
         }
 
-        return trackers;
+        return trackedBooks;
     }
 }
