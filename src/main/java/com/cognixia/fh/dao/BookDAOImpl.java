@@ -74,4 +74,39 @@ public class BookDAOImpl implements BookDAO {
         return book;
     }
 
+    // Retrieve all the books that a specific user is not tracking 
+    @Override
+    public List<Book> getBooksNotTrackedByUser(int userid) {
+        List<Book> books = new ArrayList<>();
+
+        // SQL query to select books not being tracked by the user
+        String sql = "SELECT book_id, title, author, total_pages FROM book WHERE book_id NOT IN " +
+                     "(SELECT book_id FROM tracker WHERE user_id = ?)";
+
+        try (Connection conn = ConnectionManager.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Set the parameter for the prepared statement
+            ps.setInt(1, userid);
+
+            ResultSet rs = ps.executeQuery();
+
+            // Create Book objects for each row in the result set and add them to the list
+            while (rs.next()) {
+                int id = rs.getInt("book_id");
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                int totalPages = rs.getInt("total_pages");
+
+                Book book = new Book(id, title, author, totalPages);
+                books.add(book);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error retrieving books");
+        }
+
+        return books;
+    }
+
 }
