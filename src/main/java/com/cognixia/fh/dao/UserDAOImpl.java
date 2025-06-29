@@ -7,12 +7,15 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 import com.cognixia.fh.connection.ConnectionManager;
+import com.cognixia.fh.exception.UserNotFoundException;
+import com.cognixia.fh.exception.UsernameTakenException;
 import com.cognixia.fh.model.User;
 
 public class UserDAOImpl implements UserDAO {
 
+    // This method creates a new user
     @Override
-    public boolean createUser(String username, String password) {
+    public boolean createUser(String username, String password) throws UsernameTakenException {
         // If the username or password is null or empty, return false
         if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
             return false;
@@ -39,7 +42,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             // This exception is thrown if the username already exists in the database
-            System.out.println("Username already exists");
+            throw new UsernameTakenException(username);
 
         } catch (SQLException e) {
             System.out.println("Error creating user");
@@ -48,8 +51,9 @@ public class UserDAOImpl implements UserDAO {
         return isCreated;
     }
 
+    // This method gets a user from the database
     @Override
-    public User loginUser(String username, String password) {
+    public User loginUser(String username, String password) throws UserNotFoundException {
         User user = null;
 
         // SQL query to select a user by username and password
@@ -65,7 +69,7 @@ public class UserDAOImpl implements UserDAO {
             // Execute the query and get the result set
             ResultSet rs = ps.executeQuery();
 
-            // If a user is found, create a User object
+            // If a user is found, create a User object. Otherwise, throw a UserNotFound exception
             if (rs.next()) {
                 int id = rs.getInt("user_id");
                 String dbUsername = rs.getString("username");
@@ -73,11 +77,12 @@ public class UserDAOImpl implements UserDAO {
                 boolean isAdmin = rs.getBoolean("is_admin");
 
                 user = new User(id, dbUsername, dbPassword, isAdmin);
+            } else {
+                throw new UserNotFoundException();
             }
 
         } catch (SQLException e) {
             System.out.println("Error logging in");
-            e.printStackTrace();
         }
 
         return user;
