@@ -86,7 +86,8 @@ public class TrackedBook {
 
     @Override
     public String toString() {
-        return "TrackedBook [bookId=" + bookId + ", title=" + title + ", author=" + author + ", status=" + status
-                + ", pagesRead=" + pagesRead + ", totalPages=" + totalPages + ", rating=" + rating + "]";
+        String ratingString = (rating > 0) ? (rating + "/5") : "N/A";
+        return "id = " + bookId + ", Title = " + title + ", Author = " + author + ", Status = " + status
+                + ", Pages Read = " + pagesRead + "/" + totalPages + ", Rating = " + ratingString + "\n";
     }
 }
