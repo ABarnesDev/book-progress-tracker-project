@@ -43,6 +43,7 @@ public class UserMenu {
             System.out.println("4. Update one of my books");
             System.out.println("5. Remove a book from my reading list");
             System.out.println("6. Logout");
+            if (currentUser.isAdmin()) System.out.println("7. Admin menu");
             
             String input = scanner.nextLine();
 
@@ -66,6 +67,12 @@ public class UserMenu {
                     System.out.println("\nLogging out.");
                     currentUser = null;
                     break;
+                case "7":
+                    if (currentUser.isAdmin()) {
+                        AdminMenu adminMenu = new AdminMenu(scanner, currentUser);
+                        adminMenu.showMenu();
+                        break;
+                    }
                 default:
                     System.out.println("\nPlease enter an option listed (number 1 - 6)");
                     break;
@@ -209,24 +216,24 @@ public class UserMenu {
                 } catch (NumberFormatException e) {
                     System.out.println("\nInvalid input. Please enter a number.");
                 }
-            }
+            } else {
+                // Confirm with the user before selecting the book
+                System.out.println("\nHere is the book you want to " + action + ":\n");
+                System.out.println(book);
+                System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
 
-            // Confirm with the user before selecting the book
-            System.out.println("\nHere is the book you want to " + action + ":\n");
-            System.out.println(book);
-            System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
-
-            String input = scanner.nextLine();
-            switch (input) {
-                case "y":
-                    bookConfirmed = true;
-                    break;
-                case "n":
-                    book = null;
-                    break;
-                default:
-                    System.out.println("\nPlease enter 'y' or 'n'");
-                    break;
+                String input = scanner.nextLine();
+                switch (input) {
+                    case "y":
+                        bookConfirmed = true;
+                        break;
+                    case "n":
+                        book = null;
+                        break;
+                    default:
+                        System.out.println("\nPlease enter 'y' or 'n'");
+                        break;
+                }
             }
         }
         return book;
@@ -259,24 +266,24 @@ public class UserMenu {
                 } catch (NumberFormatException e) {
                     System.out.println("\nInvalid input. Please enter a number.");
                 }
-            }
+            } else {
+                // Confirm with the user before selecting the book
+                System.out.println("\nHere is the book you want to " + action + ":\n");
+                System.out.println(book);
+                System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
 
-            // Confirm with the user before selecting the book
-            System.out.println("\nHere is the book you want to " + action + ":\n");
-            System.out.println(book);
-            System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
-
-            String input = scanner.nextLine();
-            switch (input) {
-                case "y":
-                    bookConfirmed = true;
-                    break;
-                case "n":
-                    book = null;
-                    break;
-                default:
-                    System.out.println("\nPlease enter 'y' or 'n'");
-                    break;
+                String input = scanner.nextLine();
+                switch (input) {
+                    case "y":
+                        bookConfirmed = true;
+                        break;
+                    case "n":
+                        book = null;
+                        break;
+                    default:
+                        System.out.println("\nPlease enter 'y' or 'n'");
+                        break;
+                }
             }
         }
         return book;

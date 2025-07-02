@@ -27,6 +27,7 @@ CREATE TABLE tracker (
     FOREIGN KEY (book_id) REFERENCES book(book_id)
 );
 
+INSERT INTO user (username, password, is_admin) VALUES ('admin', 'admin@123', 1);
 INSERT INTO book (title, author, total_pages) VALUES
 ('Moby-Dick', 'Herman Melville', 635),
 ('1984', 'George Orwell', 328),
