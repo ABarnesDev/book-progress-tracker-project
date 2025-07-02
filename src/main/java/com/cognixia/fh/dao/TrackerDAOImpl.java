@@ -185,4 +185,51 @@ public class TrackerDAOImpl implements TrackerDAO {
 
         return trackedBooks;
     }
+
+    // Retrieve the books and tracking details for books with a specific status tracked by the user
+    @Override
+    public List<TrackedBook> getTrackedBooksByUserIdAndStatus(int userId, Status status) {
+        List<TrackedBook> trackedBooks = new ArrayList<>();
+
+        // SQL query to select tracked books and their details filtered by status
+        String sql = "SELECT t.book_id, b.title, b.author, t.status, t.pages_read, b.total_pages, t.rating " +
+                     "FROM tracker t " +
+                     "JOIN book b ON t.book_id = b.book_id " +
+                     "WHERE t.user_id = ? AND t.status = ?";
+
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Set the parameters for the prepared statement
+            ps.setInt(1, userId);
+            ps.setString(2, status.name());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                // Iterate through the result set and create TrackedBook objects
+                while (rs.next()) {
+                    int bookId = rs.getInt("book_id");
+                    String title = rs.getString("title");
+                    String author = rs.getString("author");
+                    Status stat = Status.valueOf(rs.getString("status"));
+                    int pagesRead = rs.getInt("pages_read");
+                    int totalPages = rs.getInt("total_pages");
+                    int rating = rs.getInt("rating");
+
+                    // If rating is Null, create TrackedBook without a rating
+                    TrackedBook trackedBook;
+                    if (rs.wasNull()) {
+                        trackedBook = new TrackedBook(bookId, title, author, stat, pagesRead, totalPages);
+                    } else {
+                        trackedBook = new TrackedBook(bookId, title, author, stat, pagesRead, totalPages, rating);
+                    }
+
+                    trackedBooks.add(trackedBook);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error retrieving tracked books by status.");
+        }
+        return trackedBooks;
+    }
 }

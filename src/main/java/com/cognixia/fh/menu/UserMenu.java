@@ -52,7 +52,7 @@ public class UserMenu {
                     viewAllBooks();
                     break;
                 case "2":
-                    viewTrackedBooks();
+                    viewTrackedBooksByStatus();
                     break;
                 case "3":
                     trackBook();
@@ -89,8 +89,56 @@ public class UserMenu {
         books.forEach(System.out::println);
     }
 
+    private void viewTrackedBooksByStatus() {
+        List<TrackedBook> trackedBooks = null;
+        Status status = null;
+
+        while (trackedBooks == null) {
+            System.out.println("\nDo you want to view all the books in your reading list, the books you plan to read, the books you are currently reading, or the books you have finished reading?\n");
+
+            System.out.println("1. All books in reading list");
+            System.out.println("2. Books I plan to read");
+            System.out.println("3. Books I am currently reading");
+            System.out.println("4. Books I have finished reading");
+
+            String input = scanner.nextLine();
+            switch (input) {
+                case "1":
+                    trackedBooks = trackerDAO.getTrackedBooksByUserId(currentUser.getId());
+                    break;
+                case "2":
+                    status = Status.PLAN_TO_READ;
+                    trackedBooks = trackerDAO.getTrackedBooksByUserIdAndStatus(currentUser.getId(), status);
+                    break;
+                case "3":
+                    status = Status.CURRENTLY_READING;
+                    trackedBooks = trackerDAO.getTrackedBooksByUserIdAndStatus(currentUser.getId(), status);
+                    break;
+                case "4":
+                    status = Status.FINISHED_READING;
+                    trackedBooks = trackerDAO.getTrackedBooksByUserIdAndStatus(currentUser.getId(), status);
+                    break;
+                default:
+                    System.out.println("\nPlease enter an option listed (number 1 - 4)");
+            }
+        }
+
+        // If the user is not tracking any books, inform them
+        if (trackedBooks.isEmpty()) {
+            if (status == null) {
+                System.out.println("\nThere are no books in your reading list.");
+            } else {
+                System.out.println("\nYou are not tracking any books with the status: " + status);
+            }
+        } else {
+            // Display the tracked books
+            System.out.println("\nHere is your reading list:\n");
+            trackedBooks.forEach(System.out::println);
+        }
+    }
+
     // Displays all books tracked by the current user
-    private List<TrackedBook> viewTrackedBooks() {
+    private List<TrackedBook> viewAllTrackedBooks() {
         List<TrackedBook> trackedBooks = trackerDAO.getTrackedBooksByUserId(currentUser.getId());
 
         if (trackedBooks.isEmpty()) {
@@ -142,7 +190,7 @@ public class UserMenu {
     // Allows the user to update a tracked book's status, pages read, or rating
     private void updateTrackedBook() {
         // Get the books that the user is currently tracking
-        List<TrackedBook> trackedBooks = viewTrackedBooks();
+        List<TrackedBook> trackedBooks = viewAllTrackedBooks();
         // If the user isn't tracking any books, exit the method
         if (trackedBooks.isEmpty()) return;
 
@@ -172,7 +220,7 @@ public class UserMenu {
     // Allows the user to stop tracking a book
     private void removeTrackedBook() {
         // Get the books that the user is currently tracking
-        List<TrackedBook> trackedBooks = viewTrackedBooks();
+        List<TrackedBook> trackedBooks = viewAllTrackedBooks();
         // If the user isn't tracking any books, exit the method
         if (trackedBooks.isEmpty()) return;
 

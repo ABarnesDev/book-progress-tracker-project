@@ -12,4 +12,5 @@ public interface TrackerDAO {
     public boolean updateTracker(int userId, int bookId, Status status, int pagesRead, int totalPages, int rating) throws InvalidRatingException, InvalidPagesException;
     public boolean deleteTracker(int userId, int bookId);
     public List<TrackedBook> getTrackedBooksByUserId(int userId);
+    public List<TrackedBook> getTrackedBooksByUserIdAndStatus(int userId, Status status);
 }
