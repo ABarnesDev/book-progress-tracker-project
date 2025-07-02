@@ -19,7 +19,9 @@ public class BookDAOImpl implements BookDAO {
         List<Book> books = new ArrayList<>();
 
         // SQL query to select all books
-        String sql = "SELECT book_id, title, author, total_pages FROM book";
+        String sql = "SELECT b.book_id, b.title, b.author, b.total_pages, AVG(t.rating) AS avg_rating " +
+                     "FROM book b LEFT JOIN tracker t ON b.book_id = t.book_id " +
+                     "GROUP BY b.book_id";
 
         try (Connection conn = ConnectionManager.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -31,8 +33,13 @@ public class BookDAOImpl implements BookDAO {
                 String title = rs.getString("title");
                 String author = rs.getString("author");
                 int totalPages = rs.getInt("total_pages");
+                double averageRating = rs.getDouble("avg_rating");
+                    // If averageRating is null, set it to 0.0
+                    if (rs.wasNull()) {
+                        averageRating = 0.0;
+                    }
 
-                Book book = new Book(id, title, author, totalPages);
+                Book book = new Book(id, title, author, totalPages, averageRating);
                 books.add(book);
             }
 
@@ -48,8 +55,10 @@ public class BookDAOImpl implements BookDAO {
     public Book getBookById(int id) {
         Book book = null;
 
-        // SQL query to select a book by id
-        String sql = "SELECT book_id, title, author, total_pages FROM book WHERE book_id = ?";
+        // SQL query to select a book by id and get its average rating
+        String sql = "SELECT b.book_id, b.title, b.author, b.total_pages, AVG(t.rating) AS avg_rating " +
+                     "FROM book b LEFT JOIN tracker t ON b.book_id = t.book_id " +
+                     "WHERE b.book_id = ? GROUP BY b.book_id";
 
         try (Connection conn = ConnectionManager.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -63,8 +72,13 @@ public class BookDAOImpl implements BookDAO {
                     String title = rs.getString("title");
                     String author = rs.getString("author");
                     int totalPages = rs.getInt("total_pages");
+                    double averageRating = rs.getDouble("avg_rating");
+                    // If averageRating is null, set it to 0.0
+                    if (rs.wasNull()) {
+                        averageRating = 0.0;
+                    }
 
-                    book = new Book(id, title, author, totalPages);
+                    book = new Book(id, title, author, totalPages, averageRating);
                 }
             }
 
@@ -81,8 +95,11 @@ public class BookDAOImpl implements BookDAO {
         List<Book> books = new ArrayList<>();
 
         // SQL query to select books not being tracked by the user
-        String sql = "SELECT book_id, title, author, total_pages FROM book WHERE book_id NOT IN " +
-                     "(SELECT book_id FROM tracker WHERE user_id = ?)";
+        String sql = "SELECT b.book_id, b.title, b.author, b.total_pages, AVG(t.rating) AS avg_rating " +
+                     "FROM book b " +
+                     "LEFT JOIN tracker t ON b.book_id = t.book_id " +
+                     "WHERE b.book_id NOT IN (SELECT book_id FROM tracker WHERE user_id = ?) " +
+                     "GROUP BY b.book_id";
 
         try (Connection conn = ConnectionManager.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -97,8 +114,13 @@ public class BookDAOImpl implements BookDAO {
                     String title = rs.getString("title");
                     String author = rs.getString("author");
                     int totalPages = rs.getInt("total_pages");
+                    double averageRating = rs.getDouble("avg_rating");
+                    // If averageRating is null, set it to 0.0
+                    if (rs.wasNull()) {
+                        averageRating = 0.0;
+                    }
 
-                    Book book = new Book(id, title, author, totalPages);
+                    Book book = new Book(id, title, author, totalPages, averageRating);
                     books.add(book);
                 }
             }

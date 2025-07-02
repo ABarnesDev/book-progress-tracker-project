@@ -5,12 +5,14 @@ public class Book {
     private String title;
     private String author;
     private int totalPages;
+    private double averageRating;
     
-    public Book(int id, String title, String author, int totalPages) {
+    public Book(int id, String title, String author, int totalPages, double averageRating) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.totalPages = totalPages;
+        this.averageRating = averageRating;
     }
 
     public int getId() {
@@ -45,8 +47,16 @@ public class Book {
         this.totalPages = totalPages;
     }
 
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
+    }
+
     @Override
     public String toString() {
-        return "id = " + id + ", Title = " + title + ", Author = " + author + ", Pages = " + totalPages + "\n";
+        return "id = " + id + ", Title = " + title + ", Author = " + author + ", Pages = " + totalPages + ", Average Rating = " + averageRating + "\n";
     }
 }

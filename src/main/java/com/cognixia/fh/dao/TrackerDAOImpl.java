@@ -156,27 +156,27 @@ public class TrackerDAOImpl implements TrackerDAO {
             // Set the parameter for the prepared statement
             ps.setInt(1, userId);
 
-            ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
+                // Iterate through the result set and create TrackedBook objects
+                while (rs.next()) {
+                    int bookId = rs.getInt("book_id");
+                    String title = rs.getString("title");
+                    String author = rs.getString("author");
+                    Status status = Status.valueOf(rs.getString("status"));
+                    int pagesRead = rs.getInt("pages_read");
+                    int totalPages = rs.getInt("total_pages");
+                    int rating = rs.getInt("rating");
 
-            // Iterate through the result set and create TrackedBook objects
-            while (rs.next()) {
-                int bookId = rs.getInt("book_id");
-                String title = rs.getString("title");
-                String author = rs.getString("author");
-                Status status = Status.valueOf(rs.getString("status"));
-                int pagesRead = rs.getInt("pages_read");
-                int totalPages = rs.getInt("total_pages");
-                int rating = rs.getInt("rating");
+                    // If rating is Null, create TrackedBook without a rating
+                    TrackedBook trackedBook;
+                    if (rs.wasNull()) {
+                        trackedBook = new TrackedBook(bookId, title, author, status, pagesRead, totalPages);
+                    } else {
+                        trackedBook = new TrackedBook(bookId, title, author, status, pagesRead, totalPages, rating);
+                    }
 
-                // If rating is Null, create TrackedBook without a rating
-                TrackedBook trackedBook;
-                if (rs.wasNull()) {
-                    trackedBook = new TrackedBook(bookId, title, author, status, pagesRead, totalPages);
-                } else {
-                    trackedBook = new TrackedBook(bookId, title, author, status, pagesRead, totalPages, rating);
+                    trackedBooks.add(trackedBook);
                 }
-
-                trackedBooks.add(trackedBook);
             }
             
         } catch (Exception e) {

@@ -223,7 +223,7 @@ public class UserMenu {
                 System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
 
                 String input = scanner.nextLine();
-                switch (input) {
+                switch (input.toLowerCase()) {
                     case "y":
                         bookConfirmed = true;
                         break;
@@ -273,7 +273,7 @@ public class UserMenu {
                 System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
 
                 String input = scanner.nextLine();
-                switch (input) {
+                switch (input.toLowerCase()) {
                     case "y":
                         bookConfirmed = true;
                         break;

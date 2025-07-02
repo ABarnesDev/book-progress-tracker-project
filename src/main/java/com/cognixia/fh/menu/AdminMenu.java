@@ -191,8 +191,8 @@ public class AdminMenu {
                 System.out.println(book);
                 System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
 
-                String input = scanner.nextLine().toLowerCase();
-                switch (input) {
+                String input = scanner.nextLine();
+                switch (input.toLowerCase()) {
                     case "y":
                         bookConfirmed = true;
                         break;
