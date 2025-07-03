@@ -33,7 +33,7 @@ public class AdminMenu {
             System.out.println("4. Delete a book");
             System.out.println("5. Exit admin menu");
 
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
 
             switch (input) {
                 case "1":
@@ -129,7 +129,7 @@ public class AdminMenu {
 
         while (string.isEmpty()) {
             System.out.println(message);
-            string = scanner.nextLine();
+            string = scanner.nextLine().trim();
 
             if (string.isEmpty()) {
                 System.out.println("\nPlease enter a value.");
@@ -145,7 +145,7 @@ public class AdminMenu {
         System.out.println("\nEnter total pages:");
         while (pages <= 0) {
             try {
-                pages = Integer.parseInt(scanner.nextLine());
+                pages = Integer.parseInt(scanner.nextLine().trim());
 
                 if (pages <= 0) {
                     System.out.println("\nEnter a positive number.");
@@ -171,7 +171,7 @@ public class AdminMenu {
                 System.out.println("Enter 'c' to cancel this operation");
 
                 try {
-                    String input = scanner.nextLine();
+                    String input = scanner.nextLine().trim();
 
                     // If the user enters 'c' return null
                     if (input.equalsIgnoreCase("c")) return null;
@@ -191,7 +191,7 @@ public class AdminMenu {
                 System.out.println(book);
                 System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
 
-                String input = scanner.nextLine();
+                String input = scanner.nextLine().trim();
                 switch (input.toLowerCase()) {
                     case "y":
                         bookConfirmed = true;

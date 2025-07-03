@@ -45,7 +45,7 @@ public class UserMenu {
             System.out.println("6. Logout");
             if (currentUser.isAdmin()) System.out.println("7. Admin menu");
             
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
 
             switch (input) {
                 case "1":
@@ -89,10 +89,12 @@ public class UserMenu {
         books.forEach(System.out::println);
     }
 
+    // Displays tracked books filtered by status or all tracked books
     private void viewTrackedBooksByStatus() {
         List<TrackedBook> trackedBooks = null;
         Status status = null;
 
+        // Loop until a valid option is selected
         while (trackedBooks == null) {
             System.out.println("\nDo you want to view all the books in your reading list, the books you plan to read, the books you are currently reading, or the books you have finished reading?\n");
 
@@ -101,20 +103,24 @@ public class UserMenu {
             System.out.println("3. Books I am currently reading");
             System.out.println("4. Books I have finished reading");
 
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
             switch (input) {
                 case "1":
+                    // Get all tracked books for the user
                     trackedBooks = trackerDAO.getTrackedBooksByUserId(currentUser.getId());
                     break;
                 case "2":
+                    // Get tracked books with status PLAN_TO_READ
                     status = Status.PLAN_TO_READ;
                     trackedBooks = trackerDAO.getTrackedBooksByUserIdAndStatus(currentUser.getId(), status);
                     break;
                 case "3":
+                    // Get tracked books with status CURRENTLY_READING
                     status = Status.CURRENTLY_READING;
                     trackedBooks = trackerDAO.getTrackedBooksByUserIdAndStatus(currentUser.getId(), status);
                     break;
                 case "4":
+                    // Get tracked books with status FINISHED_READING
                     status = Status.FINISHED_READING;
                     trackedBooks = trackerDAO.getTrackedBooksByUserIdAndStatus(currentUser.getId(), status);
                     break;
@@ -250,7 +256,7 @@ public class UserMenu {
                 System.out.println("Enter 'c' to cancel this operation");
 
                 try {
-                    String input = scanner.nextLine();
+                    String input = scanner.nextLine().trim();
 
                     // If the user enters 'c' return null
                     if (input.equalsIgnoreCase("c")) return null;
@@ -270,7 +276,7 @@ public class UserMenu {
                 System.out.println(book);
                 System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
 
-                String input = scanner.nextLine();
+                String input = scanner.nextLine().trim();
                 switch (input.toLowerCase()) {
                     case "y":
                         bookConfirmed = true;
@@ -300,7 +306,7 @@ public class UserMenu {
                 System.out.println("\nEnter 'c' to cancel this operation");
 
                 try {
-                    String input = scanner.nextLine();
+                    String input = scanner.nextLine().trim();
 
                     // If the user enters 'c' return null
                     if (input.equalsIgnoreCase("c")) return null;
@@ -320,7 +326,7 @@ public class UserMenu {
                 System.out.println(book);
                 System.out.println("\nAre you sure you want to " + action + " this book? (y/n)");
 
-                String input = scanner.nextLine();
+                String input = scanner.nextLine().trim();
                 switch (input.toLowerCase()) {
                     case "y":
                         bookConfirmed = true;
@@ -347,7 +353,7 @@ public class UserMenu {
             System.out.println("2. Currently reading");
             System.out.println("3. Finished reading");
 
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
             switch (input) {
                 case "1":
                     status = Status.PLAN_TO_READ;
@@ -380,7 +386,7 @@ public class UserMenu {
             System.out.println("\nHow many pages of this book have you read?");
 
             try {
-                pagesRead = Integer.parseInt(scanner.nextLine());
+                pagesRead = Integer.parseInt(scanner.nextLine().trim());
                 // Validate that pagesRead is within valid range
                 if (pagesRead < 0 || pagesRead > totalPages) throw new InvalidPagesException(totalPages);
 
@@ -405,7 +411,7 @@ public class UserMenu {
             System.out.println("\nRate this book from 1-5. You can skip this step by entering 0.");
 
             try {
-                rating = Integer.parseInt(scanner.nextLine());
+                rating = Integer.parseInt(scanner.nextLine().trim());
                 // Validate that rating is between 0 and 5
                 if (rating < 0 || rating > 5) throw new InvalidRatingException();
 

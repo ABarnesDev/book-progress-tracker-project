@@ -39,7 +39,7 @@ public class LoginMenu {
             System.out.println("2. Login");
             System.out.println("3. Exit");
 
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
 
             switch (input) {
                 case "1":
@@ -100,7 +100,7 @@ public class LoginMenu {
 
         while (string.isEmpty()) {
             System.out.println(message);
-            string = scanner.nextLine();
+            string = scanner.nextLine().trim();
 
             if (string.isEmpty()) {
                 System.out.println("\nPlease enter a value.");
