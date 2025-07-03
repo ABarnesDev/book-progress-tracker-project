@@ -35,6 +35,7 @@ The Book Progress Tracker is a Java console application that allows users to man
 ### Setup
 
 1. **Clone the repository**
+   - `git clone https://github.com/ABarnesDev/book-progress-tracker-project.git`
 
 2. **Configure the Database**
    - Use the provided `book_tracker.sql` file to create the MySQL database and all necessary tables.
