@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.cognixia.fh</groupId>
-    <artifactId>progress-tracker-project</artifactId>
+    <artifactId>book-progress-tracker-project</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
